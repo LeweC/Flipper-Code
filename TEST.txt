@@ -1,0 +1,48 @@
++--------------------------------------------------------------------+
+|
+|
++--------------------------------------------------------------------+
+
++--------------------------------------------------------------------+
+|	Setup
+|	XL430 		--> flex/extend fingers
+|	XL330 ID 1	--> flex/extend thumb
+|	XL330 ID 2	--> rotate fingers
+|
++--------------------------------------------------------------------+
+
+#INIT
+	do
+		2 -->xNUM
+		1 2 -->xENABLE
+;
+
+#HOME
+	after 
+		INIT
+	do 
+		Rotate 
+	until 
+		STOP_REACHED		
+;
+
+#READY 
+	after 
+		HOME
+	do 
+		0 2 -->xMOTOR
+;
+
+#GRAB
+;
+
+
+:Rotate
+	50 2 -->xMOTOR
+;
+
+:STOP_REACHED
+	2 xCURRENT abs smoothCurrent - 0.1 * smoothCurrent + -->smoothCurrent
+	smoothCurrent 17 >
+;
+
