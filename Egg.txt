@@ -15,6 +15,7 @@
 	do
 		2 -->xNUM
 		1 2 -->xENABLE
+		UpdateValues!
 ;
 
 #HOME
@@ -23,7 +24,7 @@
 	do 
 		Rotate 
 	until 
-		STOP_REACHED		
+		2 xVELOCITY abs 0.01 <
 ;
 
 #READY 
@@ -38,7 +39,29 @@
 
 
 :Rotate
-	50 2 -->xMOTOR
+	1 -->motorDirection 
+	50 -->motorSpeed
+	motorDirection motorSpeed * 2 -->xMOTOR
+;
+
+:UpdateAcc 
+	2 xVELOCITY motorDirection * -->currentVelocity
+	currentVelocity oldVelocity - 100 * -->ACCELERATION
+	currentVelocity -->oldVelocity
+;
+
+:UpdateValues
+	UpdateAcc
+;
+
++--------------------------------------------------------------------+
+| Threshold für Berührung
+| zwischen -100 und -250
+| -100 scheint guter Kandidat 
++--------------------------------------------------------------------+
+
+:STOP_REACHED_ACC
+	ACCELERATION -100 <
 ;
 
 :STOP_REACHED
