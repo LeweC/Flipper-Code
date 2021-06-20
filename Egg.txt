@@ -15,21 +15,39 @@
 	do
 		2 -->xNUM
 		1 2 -->xENABLE
-		UpdateValues!
+		1 -->ENABLE
 ;
 
-#HOME
+#HOME_ROTATE_FINGERS
 	after 
 		INIT
 	do 
-		Rotate 
+		Rotate
 	until 
-		2 xVELOCITY abs 0.01 <
+		STOP_REACHED_FR
+;
+
+#HOME_EXTEND_THUMB
+	after 
+		HOME_ROTATE_FINGERS
+	do 
+		ExtendThumb
+	until 
+		STOP_REACHED_TE
+;
+
+#HOME_EXTEND_FINGERS
+	after 
+		
+	do 
+		
+	until 
+		STOP_REACHED_FE
 ;
 
 #READY 
 	after 
-		HOME
+		HOME_ROTATE_FINGERS
 	do 
 		0 2 -->xMOTOR
 ;
@@ -37,6 +55,9 @@
 #GRAB
 ;
 
++--------------------------------------------------------------------+
+|
++--------------------------------------------------------------------+
 
 :Rotate
 	1 -->motorDirection 
@@ -44,28 +65,16 @@
 	motorDirection motorSpeed * 2 -->xMOTOR
 ;
 
-:UpdateAcc 
-	2 xVELOCITY motorDirection * -->currentVelocity
-	currentVelocity oldVelocity - 100 * -->ACCELERATION
-	currentVelocity -->oldVelocity
+:STOP_REACHED_FR
+	counter 1 + -->counter 
+	2 xVELOCITY abs 0.01 < 
+	0 
+	counter 10 > IF
 ;
-
-:UpdateValues
-	UpdateAcc
-;
-
+				
 +--------------------------------------------------------------------+
-| Threshold für Berührung
-| zwischen -100 und -250
-| -100 scheint guter Kandidat 
-+--------------------------------------------------------------------+
-
-:STOP_REACHED_ACC
-	ACCELERATION -100 <
-;
-
-:STOP_REACHED
-	2 xCURRENT abs smoothCurrent - 0.1 * smoothCurrent + -->smoothCurrent
-	smoothCurrent 17 >
-;
-
+| Helper Functions
++--------------------------------------------------------------------+			
+				
+:IF -->f f ! * swap f * + ;				     
+:! 0 = ;
