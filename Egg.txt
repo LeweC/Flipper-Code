@@ -1,6 +1,8 @@
 +--------------------------------------------------------------------+
-|
-|
+| PHASE I 	HOME
+| PHASE II 	IN POSITION
+| PHASE III GRAB	
+| PHASE IV	RELEASE
 +--------------------------------------------------------------------+
 
 +--------------------------------------------------------------------+
@@ -16,7 +18,14 @@
 		2 -->xNUM
 		1 2 -->xENABLE
 		1 -->ENABLE
+		2 xANGLE -->oldAngle
+		UpdateValues!
+		0 FingerToMotorAngle 2 = -->REDLED
 ;
+
++--------------------------------------------------------------------+
+| PHASE I 	HOME
++--------------------------------------------------------------------+
 
 #HOME_ROTATE_FINGERS
 	after 
@@ -28,8 +37,6 @@
 ;
 
 #HOME_EXTEND_THUMB
-	after 
-		HOME_ROTATE_FINGERS
 	do 
 		ExtendThumb
 	until 
@@ -52,12 +59,35 @@
 		0 2 -->xMOTOR
 ;
 
++--------------------------------------------------------------------+
+| PHASE II 	IN POSITION
+|  0 RotatePosition Fingers and Thumb are parallel 
+| 90 RotatePosition Fingers and Thumb are orthogonal
++--------------------------------------------------------------------+
+
+#FINGER_IN_POSITION
+	after
+		READY
+	do
+		1000 RotatePosition
+		FlexPosition
+;
+
++--------------------------------------------------------------------+
+| PHASE III GRAB	
++--------------------------------------------------------------------+
 #GRAB
 ;
 
 +--------------------------------------------------------------------+
 |
 +--------------------------------------------------------------------+
+:UpdateValues
+	oldAngle 2 xANGLE - -->diffAngle
+	lap diffAngle 1000 > + -->lap
+	lap diffAngle -1000 < - -->lap
+	2 xANGLE -->oldAngle
+;
 
 :Rotate
 	1 -->motorDirection 
@@ -72,9 +102,32 @@
 	counter 10 > IF
 ;
 				
+:RotatePosition
+	lap 4095 * 2 xANGLE + -->totalAngle
+	-->targetAngle
+	100 motorDirection * -1 * 2 -->xMOTOR
+;				
+				
 +--------------------------------------------------------------------+
 | Helper Functions
 +--------------------------------------------------------------------+			
 				
-:IF -->f f ! * swap f * + ;				     
+:IF -->f f ! * swap f * + ;		
+		     
 :! 0 = ;
+
+:DegreeToBit
+	0.002779 * 4095 *
+;
+
+:BitToDegree
+	0.000246548 * 360 *
+;
+
+:TOTAL_ANGLE
+	4096 lap * 2 xANGLE + 
+;
+
+:FingerToMotorAngle
+	1 + 2 * 
+; 
