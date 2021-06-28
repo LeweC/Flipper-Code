@@ -30,13 +30,14 @@
 	after 
 		INIT
 	do 
-		Rotate
+		RotateFingers
 	until 
 		STOP_REACHED_FR
 ;
 
-#HOME_EXTEND_THUMB
+#HOME_EXTEND_THUMB	after	    HOME_ROTATE_FINGERS
 	do 
+		StopRotateFingers
 		ExtendThumb
 	until 
 		STOP_REACHED_TE
@@ -44,18 +45,19 @@
 
 #HOME_EXTEND_FINGERS
 	after 
-		
+		HOME_EXTEND_THUMB
 	do 
-		
+		StopExtendThumb
+		ExtendFingers
 	until 
 		STOP_REACHED_FE
 ;
 
-#READY 
-	after 
-		HOME_ROTATE_FINGERS
-	do 
-		0 2 -->xMOTOR
+#READY
+	after
+		HOME_EXTEND_FINGERS
+	do
+		StopExtendFingers
 ;
 
 +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^+
@@ -93,24 +95,52 @@
 	oldAngle 2 xANGLE - -->diffAngle
 	lap diffAngle 1000 > + -->lap
 	lap diffAngle -1000 < - -->lap
+	lap 4095 * 2 xANGLE + -->totalAngle	
 	2 xANGLE -->oldAngle
 ;
 
-:Rotate
+:RotateFingers
 	1 -->motorDirection 
-	50 -->motorSpeed
+	75 -->motorSpeed
 	motorDirection motorSpeed * 2 -->xMOTOR
+;
+
+:StopRotateFingers
+	0 2 -->xMOTOR
+;
+
+:ExtendThumb	75 2 -->xMOTOR
+;
+
+:StopExtendThumb
+	0 2 -->xMOTOR
+;
+
+:ExtendFingers
+	75 -->MOTOR
+;
+
+StopExtendFingers
+	0 -->MOTOR
 ;
 
 :STOP_REACHED_FR
 	counter 1 + -->counter 
-	2 xVELOCITY abs 0.01 < 
-	0 
-	counter 10 > IF
+	2 xVELOCITY abs 0.01 < counter 10 > *
+;
+
++----------------------------------------------------------------------+
+| ???                                                                  |
++----------------------------------------------------------------------+
+:STOP_REACHED_TE
+	
+;
+
+:STOP_REACHED_FE
+	
 ;
 				
 :RotatePosition
-	lap 4095 * 2 xANGLE + -->totalAngle
 	-->targetAngle
 	100 motorDirection * -1 * 2 -->xMOTOR
 ;	
@@ -123,9 +153,9 @@
 | Helper Functions                                                     |
 +vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv+			
 				
-:IF -->f f ! * swap f * + ;		
+:if -->f f not * swap f * + ;		
 		     
-:! 0 = ;
+:not 0 = ;
 
 :DegreeToBit
 	0.002779 * 4095 *
