@@ -15,11 +15,12 @@
 #INIT
 	do
 		2 -->xNUM
-		1 2 -->xENABLE
+		1 FINGER_ROTATE_ID -->xENABLE
+		1 THUMB_ID -->xENABLE
 		1 -->ENABLE
-		2 xANGLE -->oldAngle
+		RememberOldAngles
 		UpdateValues!
-		0 FingerToMotorAngle 2 = -->REDLED
+		0 -->REDLED
 ;
 
 +----------------------------------------------------------------------+
@@ -32,7 +33,7 @@
 	do 
 		RotateFingers
 	until 
-		STOP_REACHED_FR
+		STOP_REACHED_RF
 ;
 
 #HOME_EXTEND_THUMB	after	    HOME_ROTATE_FINGERS
@@ -40,7 +41,7 @@
 		StopRotateFingers
 		ExtendThumb
 	until 
-		STOP_REACHED_TE
+		STOP_REACHED_ET
 ;
 
 #HOME_EXTEND_FINGERS
@@ -50,7 +51,7 @@
 		StopExtendThumb
 		ExtendFingers
 	until 
-		STOP_REACHED_FE
+		STOP_REACHED_EF
 ;
 
 #READY
@@ -88,15 +89,34 @@
 #GRAB
 ;
 
++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^+
+| PHASE III GRAB                                                       |
 +----------------------------------------------------------------------+
-|                                                                      |
+
++----------------------------------------------------------------------+
+| TODO: Refactor                                                       |
 +----------------------------------------------------------------------+
 :UpdateValues
-	oldAngle 2 xANGLE - -->diffAngle
-	lap diffAngle 1000 > + -->lap
-	lap diffAngle -1000 < - -->lap
-	lap 4095 * 2 xANGLE + -->totalAngle	
-	2 xANGLE -->oldAngle
+	oldAngleRF 2 xANGLE - -->diffAngleRF
+	lapRF diffAngleRF 1000 > + -->lapRF
+	lapRF diffAngleRF -1000 < - -->lapRF
+	lapRF 4095 * 2 xANGLE + -->totalAngleRF
+	
+	oldAngleET 1 xANGLE - -->diffAngleET
+	lapET diffAngleET 1000 > + -->lapET
+	lapET diffAngleET -1000 < - -->lapET
+	lapET 4095 * 1 xANGLE + -->totalAngleET
+	
+	oldAngleEF ANGLE - -->diffAngleEF
+	lapEF diffAngle 1000 > + -->lapEF
+	lapEF diffAngle -1000 < - -->lapEF
+	lapEF 4095 * ANGLE + -->totalAngleEF	
+	RememberOldAngles
+;
+:RememberOldAngles
+	2 xANGLE -->oldAngleRF
+	1 xANGLE -->oldAngleET
+	ANGLE -->oldAngleEF
 ;
 
 :RotateFingers
@@ -106,14 +126,14 @@
 ;
 
 :StopRotateFingers
-	0 2 -->xMOTOR
+	0 FINGER_ROTATE_ID -->xMOTOR
 ;
 
-:ExtendThumb	75 2 -->xMOTOR
+:ExtendThumb	75 THUMB_ID -->xMOTOR
 ;
 
 :StopExtendThumb
-	0 2 -->xMOTOR
+	0 THUMB_ID -->xMOTOR
 ;
 
 :ExtendFingers
@@ -124,30 +144,41 @@ StopExtendFingers
 	0 -->MOTOR
 ;
 
-:STOP_REACHED_FR
++----------------------------------------------------------------------+
+| HACK: counter is hacky, but this comment is too small to contain an  |
+|       explanation                                                    |
++----------------------------------------------------------------------+
+:STOP_REACHED_RF
 	counter 1 + -->counter 
-	2 xVELOCITY abs 0.01 < counter 10 > *
+	FINGER_ROTATE_ID xVELOCITY abs 0.01 < counter 10 > *
 ;
 
 +----------------------------------------------------------------------+
-| ???                                                                  |
+| ??? TODO: determine threshold values                                 |
 +----------------------------------------------------------------------+
-:STOP_REACHED_TE
-	
+:STOP_REACHED_ET
+	counter2 1 + -->counter 
+	20 -->threshold
+	THUMB_ID xVELOCITY abs threshold > counter2 10 > *
 ;
 
-:STOP_REACHED_FE
-	
+:STOP_REACHED_EF
+	counter3 1 + -->counter 
+	2 -->threshold
+	VELOCITY abs threshold > counter3 10 > *
 ;
-				
+
++----------------------------------------------------------------------+
+| TODO: Implement                                                      |
++----------------------------------------------------------------------+				
 :RotatePosition
-	-->targetAngle
+	FingerToMotorAngle -->targetAngle
 	100 motorDirection * -1 * 2 -->xMOTOR
 ;	
 
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^+
-| PHASE III GRAB                                                       |
-+----------------------------------------------------------------------+			
+:THUMB_ID 1 ;
+:FINGER_ROTATE_ID 2 ;	
+( use MOTOR, VELOCITY etc. for finger flexion => requires no ID )		
 				
 +----------------------------------------------------------------------+
 | Helper Functions                                                     |
@@ -165,8 +196,16 @@ StopExtendFingers
 	0.000246548 * 360 *
 ;
 
-:TOTAL_ANGLE
+:TOTAL_ANGLE_FR
 	4096 lap * 2 xANGLE + 
+;
+
+:TOTAL_ANGLE_TF
+	4096 lap * 1 xANGLE + 
+;
+
+:TOTAL_ANGLE_FF
+	4096 lap * ANGLE + 
 ;
 
 :FingerToMotorAngle
