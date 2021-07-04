@@ -140,7 +140,7 @@
 	75 -->MOTOR
 ;
 
-StopExtendFingers
+:StopExtendFingers
 	0 -->MOTOR
 ;
 
@@ -154,16 +154,16 @@ StopExtendFingers
 ;
 
 +----------------------------------------------------------------------+
-| ??? TODO: determine threshold values                                 |
+| TODO: filter values?                                                 |
 +----------------------------------------------------------------------+
 :STOP_REACHED_ET
-	counter2 1 + -->counter 
-	20 -->threshold
-	THUMB_ID xVELOCITY abs threshold > counter2 10 > *
+	counter2 1 + -->counter2 
+	37 -->threshold
+	THUMB_ID xVELOCITY abs threshold < counter2 10 > *
 ;
 
 :STOP_REACHED_EF
-	counter3 1 + -->counter 
+	counter3 1 + -->counter3 
 	2 -->threshold
 	VELOCITY abs threshold > counter3 10 > *
 ;
