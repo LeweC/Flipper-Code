@@ -181,7 +181,7 @@
 ;	
 
 +----------------------------------------------------------------------+
-| use MOTOR, VELOCITY etc. for finger flexion => requires no ID        |
+| use xxMOTOR, xxVELOCITY etc. for finger flexion => requires no ID        |
 +----------------------------------------------------------------------+
 :FINGER_FLEX_ID 0 ;
 :THUMB_ID 1 ;
@@ -209,8 +209,10 @@
 	lapET id THUMB_ID = * +
 	lapRF id FINGER_ROTATE_ID = * +
 	4096 * 
-	ANGLE id xANGLE id 0 = if +
+	id xxANGLE +
 ;
+
+xxANGLE	-->id2 ANGLE id2 xANGLE id2 0 = if ;
 
 +----------------------------------------------------------------------+
 | TODO: Implement for fingers and thumb                                |
