@@ -74,10 +74,10 @@
 #FINGER_IN_POSITION
 	after
 		READY
+;
 	do
 		1000 RotatePosition
 		FlexPosition
-;
 
 +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^+
 | PHASE II IN POSITION                                                 |
@@ -110,8 +110,11 @@
 	oldAngleEF ANGLE - -->diffAngleEF
 	lapEF diffAngle 1000 > + -->lapEF
 	lapEF diffAngle -1000 < - -->lapEF
-	lapEF 4095 * ANGLE + -->totalAngleEF	
+	lapEF 4095 * ANGLE + -->totalAngleEF
+	
 	RememberOldAngles
+	
+	FINGER_IN_POSITION -->REDLED
 ;
 :RememberOldAngles
 	2 xANGLE -->oldAngleRF
@@ -129,7 +132,8 @@
 	0 FINGER_ROTATE_ID -->xMOTOR
 ;
 
-:ExtendThumb	75 THUMB_ID -->xMOTOR
+:ExtendThumb
+	75 THUMB_ID -->xMOTOR
 ;
 
 :StopExtendThumb
@@ -137,7 +141,7 @@
 ;
 
 :ExtendFingers
-	75 -->MOTOR
+	100 -->MOTOR
 ;
 
 :StopExtendFingers
@@ -165,7 +169,7 @@
 :STOP_REACHED_EF
 	counter3 1 + -->counter3 
 	2 -->threshold
-	VELOCITY abs threshold > counter3 10 > *
+	VELOCITY abs threshold < counter3 10 > *
 ;
 
 +----------------------------------------------------------------------+
