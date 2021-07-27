@@ -180,9 +180,12 @@
 	100 motorDirection * -1 * 2 -->xMOTOR
 ;	
 
++----------------------------------------------------------------------+
+| use MOTOR, VELOCITY etc. for finger flexion => requires no ID        |
++----------------------------------------------------------------------+
+:FINGER_FLEX_ID 0 ;
 :THUMB_ID 1 ;
-:FINGER_ROTATE_ID 2 ;	
-( use MOTOR, VELOCITY etc. for finger flexion => requires no ID )		
+:FINGER_ROTATE_ID 2 ;		
 				
 +----------------------------------------------------------------------+
 | Helper Functions                                                     |
@@ -200,18 +203,18 @@
 	0.000246548 * 360 *
 ;
 
-:TOTAL_ANGLE_FR
-	4096 lapRF * 2 xANGLE + 
+:xTOTAL_ANGLE
+	-->id
+	lapEF id FINGER_FLEX_ID = *
+	lapET id THUMB_ID = * +
+	lapRF id FINGER_ROTATE_ID = * +
+	4096 * 
+	ANGLE id xANGLE id 0 = if +
 ;
 
-:TOTAL_ANGLE_TF
-	4096 lapET * 1 xANGLE + 
-;
-
-:TOTAL_ANGLE_FF
-	4096 lapEF * ANGLE + 
-;
-
++----------------------------------------------------------------------+
+| TODO: Implement for fingers and thumb                                |
++----------------------------------------------------------------------+
 :FingerToMotorAngle
 	1 + 2 * 
 ; 
