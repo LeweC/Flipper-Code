@@ -201,15 +201,15 @@
 ;
 
 :TOTAL_ANGLE_FR
-	4096 lap * 2 xANGLE + 
+	4096 lapRF * 2 xANGLE + 
 ;
 
 :TOTAL_ANGLE_TF
-	4096 lap * 1 xANGLE + 
+	4096 lapET * 1 xANGLE + 
 ;
 
 :TOTAL_ANGLE_FF
-	4096 lap * ANGLE + 
+	4096 lapEF * ANGLE + 
 ;
 
 :FingerToMotorAngle
