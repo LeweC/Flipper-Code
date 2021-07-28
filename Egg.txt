@@ -67,17 +67,17 @@
 
 +----------------------------------------------------------------------+
 | PHASE II IN POSITION                                                 |
-|  0 RotatePosition Fingers and Thumb are parallel                     |
-| 90 RotatePosition Fingers and Thumb are orthogonal                   |
+|  0 RotatePosition Fingers and Thumb are orthogonal                   |
+| 90 RotatePosition Fingers and Thumb are parallel                     |
 +vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv+
 
 #FINGER_IN_POSITION
 	after
 		READY
-;
 	do
-		1000 RotatePosition
-		FlexPosition
+		0 RotatePosition
+		30 FlexPosition
+;
 
 +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^+
 | PHASE II IN POSITION                                                 |
@@ -97,31 +97,35 @@
 | TODO: Refactor                                                       |
 +----------------------------------------------------------------------+
 :UpdateValues
-	oldAngleRF 2 xxANGLE - -->diffAngleRF
-	lapRF diffAngleRF 1000 > + -->lapRF
-	lapRF diffAngleRF -1000 < - -->lapRF
-	lapRF 4095 * 2 xxANGLE + -->totalAngleRF
+	oldAngleFR FINGER_ROTATE_ID xxANGLE - -->diffAngleFR
+	lapRF diffAngleFR 1000 > + -->lapRF
+	lapRF diffAngleFR -1000 < - -->lapRF
+	lapRF 4095 * FINGER_ROTATE_ID xxANGLE + -->totalAngleFR
 	
-	oldAngleET 1 xxANGLE - -->diffAngleET
-	lapET diffAngleET 1000 > + -->lapET
-	lapET diffAngleET -1000 < - -->lapET
-	lapET 4095 * 1 xxANGLE + -->totalAngleET
+	oldAngleT THUMB_ID xxANGLE - -->diffAngleT
+	lapT diffAngleT 1000 > + -->lapT
+	lapT diffAngleT -1000 < - -->lapT
+	lapT 4095 * THUMB_ID xxANGLE + -->totalAngleT
 	
-	oldAngleEF ANGLE - -->diffAngleEF
-	lapEF diffAngle 1000 > + -->lapEF
-	lapEF diffAngle -1000 < - -->lapEF
-	lapEF 4095 * ANGLE + -->totalAngleEF
+	oldAngleFF FINGER_FLEX_ID xxANGLE - -->diffAngleFF
+	lapFF diffAngle 1000 > + -->lapFF
+	lapFF diffAngle -1000 < - -->lapFF
+	lapFF 4095 * FINGER_FLEX_ID xxANGLE + -->totalAngleFF
 	
 	RememberOldAngles
 	
 	FINGER_IN_POSITION -->REDLED
 ;
+
 :RememberOldAngles
-	2 xxANGLE -->oldAngleRF
-	1 xxANGLE -->oldAngleET
-	ANGLE -->oldAngleEF
+	FINGER_ROTATE_ID xxANGLE -->oldAngleFR
+	THUMB_ID xxANGLE -->oldAngleT
+	FINGER_FLEX_ID xxANGLE -->oldAngleFF
 ;
 
++----------------------------------------------------------------------+
+| TODO: Combine functions                                              |
++----------------------------------------------------------------------+
 :RotateFingers
 	1 -->motorDirection 
 	75 -->motorSpeed
@@ -205,8 +209,8 @@
 
 :xxTOTAL_ANGLE
 	-->id
-	lapEF id FINGER_FLEX_ID = *
-	lapET id THUMB_ID = * +
+	lapFF id FINGER_FLEX_ID = *
+	lapT id THUMB_ID = * +
 	lapRF id FINGER_ROTATE_ID = * +
 	4096 * 
 	id xxANGLE +
@@ -230,9 +234,10 @@
 +----------------------------------------------------------------------+
 :xxToMotorAngle
 	-->id3
-	1 + 2 * id3 FINGER_FLEX_ID = *
-	1 + 2 * id3 THUMB_ID = * +
-	1 + 2 * id3 FINGER_ROTATE_ID = * +
+	-->phi
+	phi 1 + 2 * id3 FINGER_FLEX_ID = *
+	phi 1 + 2 * id3 THUMB_ID = * +
+	phi 1 + 2 * id3 FINGER_ROTATE_ID = * +
 ; 
 
 +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^+
