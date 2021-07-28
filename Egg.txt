@@ -176,7 +176,7 @@
 | TODO: Implement                                                      |
 +----------------------------------------------------------------------+				
 :RotatePosition
-	FingerToMotorAngle -->targetAngle
+	FINGER_ROTATE_ID xToMotorAngle -->targetAngle
 	100 motorDirection * -1 * 2 -->xMOTOR
 ;	
 
@@ -215,10 +215,13 @@
 xxANGLE	-->id2 ANGLE id2 xANGLE id2 0 = if ;
 
 +----------------------------------------------------------------------+
-| TODO: Implement for fingers and thumb                                |
+| TODO: Find values                                                    |
 +----------------------------------------------------------------------+
-:FingerToMotorAngle
-	1 + 2 * 
+:xToMotorAngle
+	-->id3
+	1 + 2 * id3 FINGER_FLEX_ID = *
+	1 + 2 * id3 THUMB_ID = * +
+	1 + 2 * id3 FINGER_ROTATE_ID = * +
 ; 
 
 +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^+
