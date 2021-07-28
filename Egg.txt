@@ -97,15 +97,15 @@
 | TODO: Refactor                                                       |
 +----------------------------------------------------------------------+
 :UpdateValues
-	oldAngleRF 2 xANGLE - -->diffAngleRF
+	oldAngleRF 2 xxANGLE - -->diffAngleRF
 	lapRF diffAngleRF 1000 > + -->lapRF
 	lapRF diffAngleRF -1000 < - -->lapRF
-	lapRF 4095 * 2 xANGLE + -->totalAngleRF
+	lapRF 4095 * 2 xxANGLE + -->totalAngleRF
 	
-	oldAngleET 1 xANGLE - -->diffAngleET
+	oldAngleET 1 xxANGLE - -->diffAngleET
 	lapET diffAngleET 1000 > + -->lapET
 	lapET diffAngleET -1000 < - -->lapET
-	lapET 4095 * 1 xANGLE + -->totalAngleET
+	lapET 4095 * 1 xxANGLE + -->totalAngleET
 	
 	oldAngleEF ANGLE - -->diffAngleEF
 	lapEF diffAngle 1000 > + -->lapEF
@@ -117,8 +117,8 @@
 	FINGER_IN_POSITION -->REDLED
 ;
 :RememberOldAngles
-	2 xANGLE -->oldAngleRF
-	1 xANGLE -->oldAngleET
+	2 xxANGLE -->oldAngleRF
+	1 xxANGLE -->oldAngleET
 	ANGLE -->oldAngleEF
 ;
 
@@ -154,7 +154,7 @@
 +----------------------------------------------------------------------+
 :STOP_REACHED_RF
 	counter 1 + -->counter 
-	FINGER_ROTATE_ID xVELOCITY abs 0.01 < counter 10 > *
+	FINGER_ROTATE_ID xxVELOCITY abs 0.01 < counter 10 > *
 ;
 
 +----------------------------------------------------------------------+
@@ -163,7 +163,7 @@
 :STOP_REACHED_ET
 	counter2 1 + -->counter2 
 	37 -->threshold
-	THUMB_ID xVELOCITY abs threshold < counter2 10 > *
+	THUMB_ID xxVELOCITY abs threshold < counter2 10 > *
 ;
 
 :STOP_REACHED_EF
@@ -176,12 +176,12 @@
 | TODO: Implement                                                      |
 +----------------------------------------------------------------------+				
 :RotatePosition
-	FINGER_ROTATE_ID xToMotorAngle -->targetAngle
+	FINGER_ROTATE_ID xxToMotorAngle -->targetAngle
 	100 motorDirection * -1 * 2 -->xMOTOR
 ;	
 
 +----------------------------------------------------------------------+
-| use xxMOTOR, xxVELOCITY etc. for finger flexion => requires no ID        |
+| use xxMOTOR, xxVELOCITY etc. for finger flexion => requires no ID    |
 +----------------------------------------------------------------------+
 :FINGER_FLEX_ID 0 ;
 :THUMB_ID 1 ;
@@ -203,7 +203,7 @@
 	0.000246548 * 360 *
 ;
 
-:xTOTAL_ANGLE
+:xxTOTAL_ANGLE
 	-->id
 	lapEF id FINGER_FLEX_ID = *
 	lapET id THUMB_ID = * +
@@ -212,12 +212,23 @@
 	id xxANGLE +
 ;
 
-xxANGLE	-->id2 ANGLE id2 xANGLE id2 0 = if ;
++----------------------------------------------------------------------+
+| xCurrent only works for XL330 anyway -> no wrapper                   |
++----------------------------------------------------------------------+
+:xxANGLE -->id2 ANGLE id2 xANGLE id2 0 = if ;
+:xxVELOCITY -->id4 VELOCITY id4 xVELOCITY id4 0 = if ;
+:xxMOTOR -->id5 MOTOR id5 xMOTOR id5 0 = if ;
+:SetxxMOTOR
+	-->id6
+	-->u
+	u MOTOR id6 0 = if -->MOTOR
+	u xMOTOR id6 0 > if id6 -->xMOTOR
+;
 
 +----------------------------------------------------------------------+
 | TODO: Find values                                                    |
 +----------------------------------------------------------------------+
-:xToMotorAngle
+:xxToMotorAngle
 	-->id3
 	1 + 2 * id3 FINGER_FLEX_ID = *
 	1 + 2 * id3 THUMB_ID = * +
