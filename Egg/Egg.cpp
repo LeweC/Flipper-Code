@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <DynamixelShield.h>
 
 const float DXL_PROTOCOL_VERSION = 2.0;
