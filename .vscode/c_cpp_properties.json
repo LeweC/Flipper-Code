@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/Moritz/Documents/RobotikProjekt/RobotikProjektCode/include",
-                "C:/Users/Moritz/Documents/RobotikProjekt/RobotikProjektCode/src",
+                "C:/Users/Moritz/Documents/RobotikProjektCode/include",
+                "C:/Users/Moritz/Documents/RobotikProjektCode/src",
                 "C:/Users/Moritz/Documents/Arduino/libraries/DynamixelShield/src",
                 "C:/Users/Moritz/Documents/Arduino/libraries/Dynamixel2Arduino/src",
                 "C:/Users/Moritz/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated",
@@ -35,8 +35,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/Moritz/Documents/RobotikProjekt/RobotikProjektCode/include",
-                    "C:/Users/Moritz/Documents/RobotikProjekt/RobotikProjektCode/src",
+                    "C:/Users/Moritz/Documents/RobotikProjektCode/include",
+                    "C:/Users/Moritz/Documents/RobotikProjektCode/src",
                     "C:/Users/Moritz/Documents/Arduino/libraries/DynamixelShield/src",
                     "C:/Users/Moritz/Documents/Arduino/libraries/Dynamixel2Arduino/src",
                     "C:/Users/Moritz/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated",
