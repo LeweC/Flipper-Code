@@ -23,8 +23,9 @@ void initializeMotor(int id);
 void printStuff();
 void run();
 void home(int id, float threshold);
-void move(int id, float threshold, float velocity);
+void move(int id, float threshold, float pwm);
 void close(bool useThumb, float threshold);
+int sign(float x);
 
 void setup() {
     Serial.begin(57600);
@@ -82,10 +83,10 @@ void close(bool useThumb, float threshold) {
     Serial.println("Closed");
 }
 
-void move(int id, float threshold, float velocity) {
-    dxl.setGoalPWM(id, velocity);
+void move(int id, float threshold, float pwm) {
+    dxl.setGoalPWM(id, pwm);
     delay(100);
-    while(dxl.getPresentVelocity(id) > threshold) {
+    while(dxl.getPresentVelocity(id) * sign(pwm) > threshold) {
         delay(1);
     }
     dxl.setGoalPWM(id, 0);
@@ -117,4 +118,11 @@ void printStuff() {
     Serial.print(pwm);
     Serial.print("\tphidot: ");
     Serial.println(phidot);
+}
+
+// Helper functions
+
+// Returns 1 if x is positive, -1 if negative
+int sign(float x) {
+    return signbit(x) * -2 + 1;
 }
