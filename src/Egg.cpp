@@ -13,6 +13,7 @@ const int FINGER_EXTEND_ID = 3;
 const float THUMB_THRESHOLD = 37;
 const float FINGER_EXTEND_THRESHOLD = 2;
 const float FINGER_ROTATE_THRESHOLD = 2;
+const float CLOSE_THRESHOLD = 2;
 
 DynamixelShield dxl;
 
@@ -56,7 +57,7 @@ void run() {
 
     delay(1000);
 
-    close(true, 20);
+    close(true, CLOSE_THRESHOLD);
 
     Serial.println(homePositions[THUMB_ID]);
     Serial.println(homePositions[FINGER_EXTEND_ID]);
