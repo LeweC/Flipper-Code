@@ -25,7 +25,7 @@ void printStuff();
 void run();
 void home(int id, float threshold);
 void move(int id, float threshold, float pwm);
-void close(bool useThumb, float threshold);
+void grip(bool useThumb, float threshold);
 int sign(float x);
 
 void setup() {
@@ -57,7 +57,7 @@ void run() {
 
     delay(1000);
 
-    close(true, CLOSE_THRESHOLD);
+    grip(true, CLOSE_THRESHOLD);
 
     Serial.println(homePositions[THUMB_ID]);
     Serial.println(homePositions[FINGER_EXTEND_ID]);
@@ -70,7 +70,7 @@ void home(int id, float threshold) {
     Serial.println(" in home position");
 }
 
-void close(bool useThumb, float threshold) {
+void grip(bool useThumb, float threshold) {
     if(useThumb) {
         dxl.setGoalPWM(THUMB_ID, 100);
     }
