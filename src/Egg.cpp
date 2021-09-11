@@ -11,8 +11,8 @@ const int FINGER_ROTATE_ID = 1;
 const int FINGER_EXTEND_ID = 3;
 
 const float THUMB_THRESHOLD = 80;
-const float FINGER_EXTEND_THRESHOLD = 55;
-const float FINGER_ROTATE_THRESHOLD = 40;
+const float FINGER_EXTEND_THRESHOLD = 200; 
+const float FINGER_ROTATE_THRESHOLD = 240; //Without warmup maybe up to 400.
 const float CLOSE_THRESHOLD = 200;
 
 DynamixelShield dxl;
@@ -23,7 +23,7 @@ std::map<int, float> homePositions;
 void initializeMotor(int id);
 void printStuff();
 void run();
-void home(int id, float threshold);
+void home(int id, float threshold, int wait);
 void move(int id, float threshold, float pwm);
 void grip(bool useThumb, float threshold);
 int sign(float x);
@@ -52,8 +52,8 @@ void run() {
     Serial.println("hi");
     
     //home(THUMB_ID, THUMB_THRESHOLD);
-    home(FINGER_EXTEND_ID, FINGER_EXTEND_THRESHOLD);
-    //home(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD);
+    home(FINGER_EXTEND_ID, FINGER_EXTEND_THRESHOLD, 3000);
+    home(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD, 2000);
 
     delay(1000);
 
@@ -64,10 +64,11 @@ void run() {
     Serial.println(homePositions[FINGER_ROTATE_ID]);
 }
 
-void home(int id, float threshold) {
-    move(id, 200, 5);
+void home(int id, float threshold, int wait) {
+    Serial.print(threshold);
+    move(id, threshold, 20);
     dxl.setGoalPWM(id, -80);
-    delay(3000);
+    delay(wait);
     dxl.setGoalPWM(id, 0);
     Serial.print(id);
     Serial.println(" in home position");
@@ -91,7 +92,7 @@ void move(int id, float threshold, float velocity) {
     float pwm = 0;
     float smoothPWM = 0;
     while(abs(smoothPWM) < threshold) {
-        pwm = pwm + (velocity - dxl.getPresentVelocity(id));
+        pwm = pwm + 0.6 * (velocity - dxl.getPresentVelocity(id)); // 0.6: Experimental factor, prevents wiggle in small servos
         smoothPWM = smoothPWM + ((pwm - smoothPWM) * 0.1f);
         dxl.setGoalPWM(id, pwm);
         Serial.print("PWM: ");
