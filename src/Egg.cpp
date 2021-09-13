@@ -10,13 +10,13 @@ const int THUMB_ID = 2;
 const int FINGER_ROTATE_ID = 1;
 const int FINGER_EXTEND_ID = 3;
 
-const float THUMB_THRESHOLD = 80;
+const float THUMB_THRESHOLD = 90;
 const float FINGER_EXTEND_THRESHOLD = 200; 
 const float FINGER_ROTATE_THRESHOLD = 240; //Without warmup maybe up to 400.
-const float CLOSE_THRESHOLD = 200;
+const float CLOSE_THRESHOLD = 400;
+const float RELEASE_TIME = 5000;
 
 DynamixelShield dxl;
-
 int t;
 std::map<int, float> homePositions;
 
@@ -26,6 +26,7 @@ void run();
 void home(int id, float threshold, int wait);
 void move(int id, float threshold, float pwm);
 void grip(bool useThumb, float threshold);
+void release(bool useThumb, float releaseTime);
 int sign(float x);
 
 void setup() {
@@ -43,7 +44,9 @@ void setup() {
     run();
 }
 
-void loop() {}
+void loop() {
+
+}
 
 void run() {
     // HACK
@@ -51,17 +54,22 @@ void run() {
     delay(5000);
     Serial.println("hi");
     
-    //home(THUMB_ID, THUMB_THRESHOLD);
-    home(FINGER_EXTEND_ID, FINGER_EXTEND_THRESHOLD, 3000);
-    home(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD, 2000);
-
-    delay(1000);
-
-    //grip(true, CLOSE_THRESHOLD);
+    home(THUMB_ID, THUMB_THRESHOLD, 4000);
+    home(FINGER_EXTEND_ID, FINGER_EXTEND_THRESHOLD, 3200);
+    home(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD, 2500);
 
     Serial.println(homePositions[THUMB_ID]);
     Serial.println(homePositions[FINGER_EXTEND_ID]);
     Serial.println(homePositions[FINGER_ROTATE_ID]);
+
+    delay(1000);
+
+    grip(true, CLOSE_THRESHOLD);
+    
+    delay(2000);
+    
+    release(true, RELEASE_TIME);
+
 }
 
 void home(int id, float threshold, int wait) {
@@ -74,16 +82,29 @@ void home(int id, float threshold, int wait) {
     Serial.println(" in home position");
 }
 
+void release(bool useThumb, float releaseTime) {
+     if(useThumb) {
+        dxl.setGoalPWM(THUMB_ID, -100);
+    }
+    dxl.setGoalPWM(FINGER_EXTEND_ID, -100);
+    delay(releaseTime);
+    dxl.setGoalPWM(FINGER_EXTEND_ID, 0);
+    dxl.setGoalPWM(THUMB_ID, 0);
+
+}
+
 void grip(bool useThumb, float threshold) {
+    move(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD, 20);
+    //dxl.setGoalPWM(FINGER_EXTEND_ID, 100);
+    delay(100);
     if(useThumb) {
         dxl.setGoalPWM(THUMB_ID, 100);
     }
-    dxl.setGoalPWM(FINGER_EXTEND_ID, 100);
-    delay(100);
-    while(dxl.getPresentVelocity(FINGER_EXTEND_ID) > threshold) {
-        delay(1);
-    }
-    dxl.setGoalPWM(FINGER_EXTEND_ID, 0);
+    move(FINGER_EXTEND_ID, CLOSE_THRESHOLD, 20);
+    //while(dxl.getPresentVelocity(FINGER_EXTEND_ID) > threshold) {
+     //   delay(1);
+    //}
+    //dxl.setGoalPWM(FINGER_EXTEND_ID, 0);
     dxl.setGoalPWM(THUMB_ID, 0);
     Serial.println("Closed");
 }
