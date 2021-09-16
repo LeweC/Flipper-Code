@@ -14,7 +14,7 @@ const float THUMB_THRESHOLD = 90;
 const float FINGER_EXTEND_THRESHOLD = 200; 
 const float FINGER_ROTATE_THRESHOLD = 240; //Without warmup maybe up to 400.
 const float CLOSE_THRESHOLD = 400;
-const float RELEASE_TIME = 5000;
+const float RELEASE_TIME = 15000;
 
 DynamixelShield dxl;
 int t;
@@ -64,11 +64,11 @@ void run() {
 
     delay(1000);
 
-    grip(true, CLOSE_THRESHOLD);
+    grip(false, CLOSE_THRESHOLD);
     
     delay(2000);
     
-    release(true, RELEASE_TIME);
+    release(false, RELEASE_TIME);
 
 }
 
