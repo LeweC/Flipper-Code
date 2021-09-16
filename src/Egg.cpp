@@ -14,7 +14,7 @@ const float THUMB_THRESHOLD = 90;
 const float FINGER_EXTEND_THRESHOLD = 200; 
 const float FINGER_ROTATE_THRESHOLD = 240; //Without warmup maybe up to 400.
 const float CLOSE_THRESHOLD = 400;
-const float RELEASE_TIME = 15000;
+const float RELEASE_TIME = 4000;
 
 DynamixelShield dxl;
 int t;
@@ -54,7 +54,7 @@ void run() {
     delay(5000);
     Serial.println("hi");
     
-    home(THUMB_ID, THUMB_THRESHOLD, 4000);
+    //home(THUMB_ID, THUMB_THRESHOLD, 4000);
     home(FINGER_EXTEND_ID, FINGER_EXTEND_THRESHOLD, 3200);
     home(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD, 2500);
 
@@ -62,11 +62,11 @@ void run() {
     Serial.println(homePositions[FINGER_EXTEND_ID]);
     Serial.println(homePositions[FINGER_ROTATE_ID]);
 
-    delay(1000);
+    delay(10000);
 
     grip(false, CLOSE_THRESHOLD);
     
-    delay(2000);
+    delay(10000);
     
     release(false, RELEASE_TIME);
 
