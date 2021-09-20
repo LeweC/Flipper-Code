@@ -54,19 +54,19 @@ void run() {
     delay(5000);
     Serial.println("hi");
     
-    //home(THUMB_ID, THUMB_THRESHOLD, 4000);
-    home(FINGER_EXTEND_ID, FINGER_EXTEND_THRESHOLD, 3200);
+    home(THUMB_ID, THUMB_THRESHOLD, 4000);
+    home(FINGER_EXTEND_ID, FINGER_EXTEND_THRESHOLD, 3500);
     home(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD, 2500);
 
     Serial.println(homePositions[THUMB_ID]);
     Serial.println(homePositions[FINGER_EXTEND_ID]);
     Serial.println(homePositions[FINGER_ROTATE_ID]);
 
-    delay(10000);
+    delay(15000);
 
     grip(false, CLOSE_THRESHOLD);
     
-    delay(10000);
+    delay(15000);
     
     release(false, RELEASE_TIME);
 
@@ -95,8 +95,10 @@ void release(bool useThumb, float releaseTime) {
 
 void grip(bool useThumb, float threshold) {
     move(FINGER_ROTATE_ID, FINGER_ROTATE_THRESHOLD, 20);
-    //dxl.setGoalPWM(FINGER_EXTEND_ID, 100);
-    delay(100);
+    dxl.setGoalPWM(FINGER_EXTEND_ID, 100);
+    delay(2500);
+    dxl.setGoalPWM(FINGER_EXTEND_ID, 0);
+    delay(3000);
     if(useThumb) {
         dxl.setGoalPWM(THUMB_ID, 100);
     }
